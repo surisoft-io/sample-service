@@ -1,0 +1,57 @@
+
+server:
+  port: 8082
+  forward-headers-strategy: FRAMEWORK
+  ssl:
+    enabled: false
+    key-store-type: PKCS12
+    key-store: classpath:capi.p12
+    key-store-password: changeit
+
+host: localhost
+cache:
+  name: cacheItem
+
+info:
+  app:
+    environment: dev
+spring:
+  application:
+    name: sample-service
+  cloud:
+    consul:
+      enabled: true
+      port: 8500
+      host: http://localhost
+      discovery:
+        instance-id: ${info.app.environment}-${host}-${server.port}
+        instance-group: ${info.app.environment}
+        scheme: http
+        hostname: localhost
+        port: 8082
+        tags: Category=SAMPLE, Owner=Rodrigo Coelho
+        metadata:
+          group: dev
+          open-api: http://${host}:${server.port}/v3/api-docs/sample-services
+          secured: false
+          opa-rego: capi/smk_api/dev
+          #allowed-origins: http://localhost, http://xpto.com
+          #ingress: https://.....................
+          #schema: https
+          #keep-group: true
+          #subscription-group: capi
+          #throttle-max-calls: 5
+          #throttle-period-in-seconds: 10
+          #throttle-break: true
+        health-check-url: http://${host}:${server.port}/actuator/health
+
+keycloak:
+  auth-server-url:
+  realm:
+  resource:
+  public-client:
+
+ui:
+  allowed:
+    origins: http://localhost:4200
+
