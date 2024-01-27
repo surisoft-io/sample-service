@@ -22,7 +22,7 @@ jobs:
         run: mvn package -DskipTests --file pom.xml
       - name: Docker login
         run: |
-          docker login -u surisoft -p "${{ secrets.DOCKER_HUB_PWD }}"
+          docker login -u surisoft -p ${{ secrets.DOCKER_HUB_PWD }}
       - name: Build Docker image
         run: docker build . --build-arg "CAPI_VERSION=${{ env.RELEASE_VERSION }}" --file Dockerfile --tag surisoft/sample-service:${{ env.RELEASE_VERSION }}
       - name: Docker Push
