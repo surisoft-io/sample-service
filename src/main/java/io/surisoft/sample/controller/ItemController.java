@@ -4,6 +4,7 @@ import io.surisoft.sample.schema.Item;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.cache2k.Cache;
 import org.cache2k.CacheEntry;
@@ -13,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Enumeration;
 import java.util.Set;
 import java.util.UUID;
 
@@ -39,7 +41,25 @@ public class ItemController {
 
     @GetMapping(path = "/sample/item", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all Items", description = "Open")
-    public ResponseEntity<Set<CacheEntry<String, Item>>> getItems() {
+    public ResponseEntity<Set<CacheEntry<String, Item>>> getItems(HttpServletRequest httpServletRequest) {
+        Enumeration<String> i = httpServletRequest.getHeaderNames();
+        log.info("------------ HEADER INFO ------------------");
+        while(i.hasMoreElements()) {
+            String k = i.nextElement();
+            log.info(k + ": " + httpServletRequest.getHeader(k));
+        }
+        log.info("------------ PATH INFO ------------------");
+        log.info(httpServletRequest.getQueryString());
+
+        if(cache.entries().isEmpty()) {
+            String id = UUID.randomUUID().toString();
+            Item item = new Item();
+            item.setId(id);
+            item.setName("Rodrigo");
+            item.setHost("local");
+            cache.put(id, item);
+        }
+
         return new ResponseEntity<>(cache.entries(), HttpStatus.OK);
     }
 

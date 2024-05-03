@@ -5,12 +5,15 @@ server:
   ssl:
     enabled: false
     key-store-type: PKCS12
-    key-store: classpath:capi.p12
+    key-store: classpath:local.p12
     key-store-password: changeit
 
 host: localhost
 cache:
   name: cacheItem
+
+springdoc:
+  show-actuator: true
 
 info:
   app:
@@ -24,7 +27,7 @@ spring:
       port: 8500
       host: http://localhost
       discovery:
-        instance-id: ${info.app.environment}-${host}-${server.port}
+        instance-id: ${info.app.environment}-${host}-${server.port}-1
         instance-group: ${info.app.environment}
         scheme: http
         hostname: localhost
@@ -34,16 +37,17 @@ spring:
           group: dev
           open-api: http://${host}:${server.port}/v3/api-docs/sample-services
           secured: false
-          opa-rego: capi/smk_api/dev
+          #opa-rego: capi/sample_service/dev
           #allowed-origins: http://localhost, http://xpto.com
           #ingress: https://.....................
-          #schema: https
+          schema: http
           #keep-group: true
           #subscription-group: capi
           #throttle-max-calls: 5
           #throttle-period-in-seconds: 10
           #throttle-break: true
-        health-check-url: http://${host}:${server.port}/actuator/health
+          namespace: local
+        health-check-url: https://${host}:${server.port}/actuator/health
 
 keycloak:
   auth-server-url:
